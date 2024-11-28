@@ -1,0 +1,39 @@
+{
+  "name": "badahead/ansilover",
+  "description": "ansilove-php on steroids",
+  "type": "library",
+  "minimum-stability": "stable",
+  "prefer-stable": true,
+  "config": {
+    "platform": {
+      "php": "8.3"
+    },
+    "optimize-autoloader": true,
+    "classmap-authoritative": true,
+    "apcu-autoloader": true,
+    "sort-packages": true,
+    "allow-plugins": {
+      "phpstan/extension-installer": true,
+      "php-http/discovery": true
+    }
+  },
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.3",
+    "ext-gd": "*"
+  },
+  "require-dev": {
+    "rector/rector": "@stable"
+  },
+  "authors": [
+    {
+      "name": "badahead",
+      "email": "badahead@protonmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Badahead\\AnsiLover\\": "src/"
+    }
+  }
+}
