@@ -9,17 +9,12 @@ namespace Badahead\AnsiLover\Core {
 
     class Main
     {
-        public int            $THUMBNAILS_SIZE      = 1;
-        public int            $THUMBNAILS_HEIGHT    = 0;
-        public string         $THUMBNAILS_TAG       = "-thumbnail";
-        public bool           $SPLIT                = false;
-        public int            $SPLIT_HEIGHT         = 4096;
-        public string         $SPLIT_SEPARATOR      = ".";
-        protected ?string     $filename             = null;
-        protected ?array      $sauce                = null;
-        protected ?Font       $font                 = null;
-        protected ?Background $background           = null;
-        protected int         $columns              = 80;
+        private const int             THUMBNAILS_SIZE   = 1;
+        private const  int            THUMBNAILS_HEIGHT = 0;
+        protected ?array      $sauce      = null;
+        protected ?Font       $font       = null;
+        protected ?Background $background = null;
+        protected int         $columns    = 80;
 
         public function __construct(?string $fontName, public string $content) {
             if (!extension_loaded('gd')) {
@@ -58,18 +53,18 @@ namespace Badahead\AnsiLover\Core {
 
         final protected function thumbnail(GdImage $source, int $columns, int $position_y_max): string {
             $columns = min($columns, 80);
-            if ($this->THUMBNAILS_SIZE <= 0) {
+            if (self::THUMBNAILS_SIZE <= 0) {
                 $size = 1;
             }
             else {
-                $size = $this->THUMBNAILS_SIZE;
+                $size = self::THUMBNAILS_SIZE;
             }
-            if ($this->THUMBNAILS_HEIGHT === 0) {
+            if (self::THUMBNAILS_HEIGHT === 0) {
                 $height        = $position_y_max * ($this->font->height / 8);
                 $height_source = $position_y_max * $this->font->height;
             }
             else {
-                $height        = min($position_y_max * ($this->font->height / 8), $this->THUMBNAILS_HEIGHT);
+                $height        = min($position_y_max * ($this->font->height / 8), self::THUMBNAILS_HEIGHT);
                 $height_source = $height * 8;
             }
             $width_source = $columns * 8;
