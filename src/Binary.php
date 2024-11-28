@@ -30,12 +30,7 @@ namespace Badahead\AnsiLover {
          */
         public function __construct(string $content, ?string $fontName = null, int $columns = 160, private ?int $bits = null, private readonly bool $thumbnail = false, private readonly bool $icecolors = false) {
             parent::__construct(fontName: $fontName, content: $content);
-            if ($columns === 0) {
-                $this->columns = 160;
-            }
-            else {
-                $this->columns = $columns;
-            }
+            $this->columns = $columns === 0 ? 160 : $columns;
         }
 
         /**

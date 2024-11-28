@@ -8,8 +8,8 @@ namespace Badahead\AnsiLover {
 
     class PcBoard extends Main
     {
-        private const array          PCBOARD_STRIP_CODES = ['@POFF@',
-                                                            '@WAIT@'];
+        private const array STRIP_CODES = ['@POFF@',
+                                           '@WAIT@'];
 
         /**
          * @throws Exception
@@ -45,7 +45,7 @@ namespace Badahead\AnsiLover {
             $pcb_colors[69] = 11;
             $pcb_colors[70] = 15;
             // STRIP UNWANTED PCBOARD CODES
-            foreach (self::PCBOARD_STRIP_CODES as $code) {
+            foreach (self::STRIP_CODES as $code) {
                 $this->content = preg_replace("/(" . $code . ")/", "", $this->content);
             }
             // PROCESS PCB
@@ -65,12 +65,10 @@ namespace Badahead\AnsiLover {
                     $position_x = 0;
                 }
                 // CR+LF                                                                     
-                if ($current_character === 13) {
-                    if ($next_character === 10) {
-                        $position_y++;
-                        $position_x = 0;
-                        $loop++;
-                    }
+                if ($current_character === 13 && $next_character === 10) {
+                    $position_y++;
+                    $position_x = 0;
+                    $loop++;
                 }
                 // LF                                                                        
                 if ($current_character === 10) {
@@ -137,8 +135,10 @@ namespace Badahead\AnsiLover {
                 throw new Exception("Can't allocate buffer image memory");
             }
             imagecolorallocate($pcboard, 0, 0, 0);
+            // RENDER PCB
+            $counter = count($pcboard_buffer);
             // RENDER PCB                                                                
-            for ($loop = 0; $loop < sizeof($pcboard_buffer); $loop += 5) {
+            for ($loop = 0; $loop < $counter; $loop += 5) {
                 $position_x       = $pcboard_buffer[$loop];
                 $position_y       = $pcboard_buffer[$loop + 1];
                 $color_background = $pcboard_buffer[$loop + 2];

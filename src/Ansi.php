@@ -59,7 +59,7 @@ namespace Badahead\AnsiLover {
             $input_file_size = $this->getInputFileSize();
             if ($this->is_diz) {
                 $this->content   = preg_replace("/^(\s+[\r\n])+/", "", $this->content);
-                $this->content   = rtrim($this->content);
+                $this->content   = rtrim((string)$this->content);
                 $input_file_size = strlen($this->content);
             }
             imagecolortransparent($this->font->content, 20);
@@ -121,7 +121,7 @@ namespace Badahead\AnsiLover {
                             if (($ansi_sequence ?? '') === '') {
                                 $ansi_sequence = 1;
                             }
-                            $position_y = $position_y - $ansi_sequence;
+                            $position_y -= $ansi_sequence;
                             $loop       += $ansi_sequence_loop + 2;
                             break;
                         }
@@ -130,7 +130,7 @@ namespace Badahead\AnsiLover {
                             if (($ansi_sequence ?? '') === '') {
                                 $ansi_sequence = 1;
                             }
-                            $position_y = $position_y + $ansi_sequence;
+                            $position_y += $ansi_sequence;
                             $loop       += $ansi_sequence_loop + 2;
                             break;
                         }
@@ -139,7 +139,7 @@ namespace Badahead\AnsiLover {
                             if (($ansi_sequence ?? '') === '') {
                                 $ansi_sequence = 1;
                             }
-                            $position_x = $position_x + $ansi_sequence;
+                            $position_x += $ansi_sequence;
                             if ($position_x > 80) {
                                 $position_x = 80;
                             }
@@ -151,7 +151,7 @@ namespace Badahead\AnsiLover {
                             if (($ansi_sequence ?? '') === '') {
                                 $ansi_sequence = 1;
                             }
-                            $position_x = $position_x - $ansi_sequence;
+                            $position_x -= $ansi_sequence;
                             if ($position_x < 0) {
                                 $position_x = 0;
                             }
@@ -188,7 +188,8 @@ namespace Badahead\AnsiLover {
                         if ($ansi_sequence_character === 'm') {
                             $ansi_sequence_exploded = explode(";", $ansi_sequence);
                             sort($ansi_sequence_exploded);
-                            for ($loop_ansi_sequence = 0; $loop_ansi_sequence < sizeof($ansi_sequence_exploded); $loop_ansi_sequence++) {
+                            $counter = count($ansi_sequence_exploded);
+                            for ($loop_ansi_sequence = 0; $loop_ansi_sequence < $counter; $loop_ansi_sequence++) {
                                 $ansi_sequence_value = $ansi_sequence_exploded[$loop_ansi_sequence];
                                 if ((int)$ansi_sequence_value === 0) {
                                     $color_background = 0;
@@ -299,30 +300,28 @@ namespace Badahead\AnsiLover {
                     imagecolorset($this->font->content, $loop, $ced_foreground_color[0], $ced_foreground_color[1], $ced_foreground_color[2]);
                 }
             }
+            elseif ($this->workbench) {
+                $workbench_color = [0 => self::WORKBENCH_COLOR_0,
+                                    1 => self::WORKBENCH_COLOR_4,
+                                    2 => self::WORKBENCH_COLOR_2,
+                                    3 => self::WORKBENCH_COLOR_6,
+                                    4 => self::WORKBENCH_COLOR_1,
+                                    5 => self::WORKBENCH_COLOR_5,
+                                    6 => self::WORKBENCH_COLOR_3,
+                                    7 => self::WORKBENCH_COLOR_7,];
+                imagecolorallocate($ansi, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
+                $workbench_background = imagecolorallocate($ansi, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
+                $workbench_background = imagecolorallocate($this->background->content, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
+                imagefill($ansi, 0, 0, $workbench_background);
+                for ($loop = 0; $loop < 8; $loop++) {
+                    imagecolorset($this->background->content, $loop, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
+                    imagecolorset($this->background->content, $loop + 8, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
+                    imagecolorset($this->font->content, $loop, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
+                    imagecolorset($this->font->content, $loop + 8, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
+                }
+            }
             else {
-                if ($this->workbench) {
-                    $workbench_color = [0 => self::WORKBENCH_COLOR_0,
-                                        1 => self::WORKBENCH_COLOR_4,
-                                        2 => self::WORKBENCH_COLOR_2,
-                                        3 => self::WORKBENCH_COLOR_6,
-                                        4 => self::WORKBENCH_COLOR_1,
-                                        5 => self::WORKBENCH_COLOR_5,
-                                        6 => self::WORKBENCH_COLOR_3,
-                                        7 => self::WORKBENCH_COLOR_7,];
-                    imagecolorallocate($ansi, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
-                    $workbench_background = imagecolorallocate($ansi, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
-                    $workbench_background = imagecolorallocate($this->background->content, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
-                    imagefill($ansi, 0, 0, $workbench_background);
-                    for ($loop = 0; $loop < 8; $loop++) {
-                        imagecolorset($this->background->content, $loop, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
-                        imagecolorset($this->background->content, $loop + 8, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
-                        imagecolorset($this->font->content, $loop, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
-                        imagecolorset($this->font->content, $loop + 8, $workbench_color[$loop][0], $workbench_color[$loop][1], $workbench_color[$loop][2]);
-                    }
-                }
-                else {
-                    $background_canvas = imagecolorallocate($ansi, 0, 0, 0);
-                }
+                $background_canvas = imagecolorallocate($ansi, 0, 0, 0);
             }
             for ($loop = 0; $loop < 16; $loop++) {
                 // Generating ANSI colors array in order to be able to draw underlines 
@@ -347,7 +346,7 @@ namespace Badahead\AnsiLover {
                     if ($color_background !== 0 || !$italics) {
                         imagecopy($ansi, $this->background->content, $position_x * $this->bits, $position_y * $this->font->height, $color_background * 9, 0, $this->bits, $this->font->height);
                     }
-                    if (!$italics) {
+                    if ($italics === 0) {
                         imagecopy($ansi, $this->font->content, $position_x * $this->bits, $position_y * $this->font->height, $character * $this->font->width, $color_foreground * $this->font->height, $this->bits, $this->font->height);
                     }
                     else {
@@ -367,13 +366,13 @@ namespace Badahead\AnsiLover {
                     if ($bold && !$italics && ($this->ced || $this->workbench)) {
                         imagecopy($ansi, $this->font->content, 1 + $position_x * $this->bits, $position_y * $this->font->height, $character * $this->font->width, $color_foreground * $this->font->height, $this->bits, $this->font->height);
                     }
-                    if ($underline) {
+                    if ($underline !== 0) {
                         $loop_column      = 0;
                         $character_size_x = 8;
-                        if ($bold) {
+                        if ($bold !== 0) {
                             $character_size_x++;
                         }
-                        if ($italics) {
+                        if ($italics !== 0) {
                             $loop_column      = -1;
                             $character_size_x = 11;
                         }
@@ -382,10 +381,8 @@ namespace Badahead\AnsiLover {
                                 imagesetpixel($ansi, $position_x * $this->bits + $loop_column, $position_y * $this->font->height + 14, $colors[$color_foreground]);
                                 imagesetpixel($ansi, $position_x * $this->bits + $loop_column, $position_y * $this->font->height + 15, $colors[$color_foreground]);
                             }
-                            else {
-                                if (imagecolorat($ansi, $position_x * $this->bits + $loop_column, $position_y * $this->font->height + 15) !== $color_background && imagecolorat($ansi, $position_x * $this->bits + $loop_column + 1, $position_y * $this->font->height + 15) === $color_background) {
-                                    $loop_column++;
-                                }
+                            elseif (imagecolorat($ansi, $position_x * $this->bits + $loop_column, $position_y * $this->font->height + 15) !== $color_background && imagecolorat($ansi, $position_x * $this->bits + $loop_column + 1, $position_y * $this->font->height + 15) === $color_background) {
+                                $loop_column++;
                             }
                             $loop_column++;
                         }

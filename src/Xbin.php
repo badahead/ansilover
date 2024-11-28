@@ -148,7 +148,8 @@ namespace Badahead\AnsiLover {
             // RENDER XBIN
             $position_x = 0;
             $position_y = 0;
-            for ($loop = 0; $loop < sizeof($xbin_buffer); $loop += 2) {
+            $counter    = count($xbin_buffer);
+            for ($loop = 0; $loop < $counter; $loop += 2) {
                 if ($position_x === $xbin_header['Width']) {
                     $position_x = 0;
                     $position_y++;

@@ -165,7 +165,7 @@ namespace Badahead\AnsiLover\Core {
          * @throws Exception
          */
         public static function get(?string $fontName): self {
-            if (empty($fontName)) {
+            if ($fontName === null || $fontName === '') {
                 $fontName = '80x25';
             }
             if (str_contains($fontName, '+')) {

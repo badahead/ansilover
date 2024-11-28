@@ -20,8 +20,7 @@ namespace Badahead\AnsiLover {
          */
         final public function render(): string {
             $input_file_size = $this->getInputFileSize();
-
-            // EXTRACT IDF HEADER                                                        
+            // EXTRACT IDF HEADER
             $idf_header['ID'] = substr($this->content, 0, 4);
             $idf_header       = array_merge($idf_header, unpack('vx1/vy1/vx2/vy2', substr($this->content, 4, 8)));
             // ALLOCATE BACKGROUND/FONT IMAGE BUFFER MEMORY                              
@@ -88,14 +87,15 @@ namespace Badahead\AnsiLover {
                 $loop += 2;
             }
             // ALLOCATE IMAGE BUFFER MEMORY                                              
-            if (!$idf = imagecreate(($idf_header['x2'] + 1) * 8, (sizeof($idf_buffer) / 2 / 80) * 16)) {
+            if (!$idf = imagecreate(($idf_header['x2'] + 1) * 8, (count($idf_buffer) / 2 / 80) * 16)) {
                 throw new Exception("Can't allocate buffer image memory");
             }
             imagecolorallocate($idf, 0, 0, 0);
             // RENDER IDF
             $position_x = 0;
             $position_y = 0;
-            for ($loop = 0; $loop < sizeof($idf_buffer); $loop += 2) {
+            $counter    = count($idf_buffer);
+            for ($loop = 0; $loop < $counter; $loop += 2) {
                 if ($position_x == $idf_header['x2'] + 1) {
                     $position_x = 0;
                     $position_y++;

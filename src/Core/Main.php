@@ -36,12 +36,7 @@ namespace Badahead\AnsiLover\Core {
                 $sauce           = array_merge($sauce, unpack('lFileSize/CDataType/CFileType/v4TInfo/CComments/CFlags', substr($this->content, 90, 16)));
                 $sauce['Filler'] = substr($this->content, 106, 22);
             }
-            if ($sauce['ID'] === 'SAUCE') {
-                $this->sauce = $sauce;
-            }
-            else {
-                $this->sauce = null;
-            }
+            $this->sauce = $sauce['ID'] === 'SAUCE' ? $sauce : null;
         }
 
         final protected function getInputFileSize(): int {
@@ -53,12 +48,7 @@ namespace Badahead\AnsiLover\Core {
 
         final protected function thumbnail(GdImage $source, int $columns, int $position_y_max): string {
             $columns = min($columns, 80);
-            if (self::THUMBNAILS_SIZE <= 0) {
-                $size = 1;
-            }
-            else {
-                $size = self::THUMBNAILS_SIZE;
-            }
+            $size    = self::THUMBNAILS_SIZE <= 0 ? 1 : self::THUMBNAILS_SIZE;
             if (self::THUMBNAILS_HEIGHT === 0) {
                 $height        = $position_y_max * ($this->font->height / 8);
                 $height_source = $position_y_max * $this->font->height;
