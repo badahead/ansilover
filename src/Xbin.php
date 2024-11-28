@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Badahead\AnsiLover {
 
+    use Badahead\AnsiLover\Core\FileInterface;
     use Badahead\AnsiLover\Core\Main;
     use Exception;
 
-    class Xbin extends Main
+    final class Xbin extends Main implements FileInterface
     {
         public function __construct(string $content, ?string $fontName = null, int $columns = 80, private readonly bool $thumbnail = false) {
             parent::__construct(fontName: $fontName, content: $content);

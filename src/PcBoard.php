@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Badahead\AnsiLover {
 
+    use Badahead\AnsiLover\Core\FileInterface;
     use Badahead\AnsiLover\Core\Main;
     use Exception;
 
-    class PcBoard extends Main
+    final class PcBoard extends Main implements FileInterface
     {
         private const array STRIP_CODES = ['@POFF@',
                                            '@WAIT@'];

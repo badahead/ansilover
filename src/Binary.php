@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Badahead\AnsiLover {
 
+    use Badahead\AnsiLover\Core\FileInterface;
     use Badahead\AnsiLover\Core\Main;
     use Exception;
 
-    class Binary extends Main
+    final class Binary extends Main implements FileInterface
     {
         private const array BINARY_COLORS = [0  => 0,
                                              1  => 4,

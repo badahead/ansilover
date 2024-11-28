@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Badahead\AnsiLover {
 
+    use Badahead\AnsiLover\Core\FileInterface;
     use Badahead\AnsiLover\Core\Main;
     use Exception;
 
-    class Adf extends Main
+    final class Adf extends Main implements FileInterface
     {
         private const array    ADF_COLORS = [0,
                                              1,

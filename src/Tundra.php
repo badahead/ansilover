@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Badahead\AnsiLover {
 
+    use Badahead\AnsiLover\Core\FileInterface;
     use Badahead\AnsiLover\Core\Main;
     use Exception;
 
-    class Tundra extends Main
+    final class Tundra extends Main implements FileInterface
     {
         /**
          * @throws Exception

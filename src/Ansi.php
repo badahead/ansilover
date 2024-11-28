@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Badahead\AnsiLover {
 
+    use Badahead\AnsiLover\Core\FileInterface;
     use Badahead\AnsiLover\Core\Main;
     use Exception;
 
-    class Ansi extends Main
+    final class Ansi extends Main implements FileInterface
     {
         private const bool           SUBSTITUTE_BREAK     = true;
         private const bool           WRAP_COLUMN_80       = true;
