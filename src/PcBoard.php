@@ -8,6 +8,9 @@ namespace Badahead\AnsiLover {
 
     class PcBoard extends Main
     {
+        private const array          PCBOARD_STRIP_CODES = ['@POFF@',
+                                                            '@WAIT@'];
+
         /**
          * @throws Exception
          */
@@ -16,7 +19,10 @@ namespace Badahead\AnsiLover {
             $this->columns = 80;
         }
 
-        final public function render():string {
+        /**
+         * @throws Exception
+         */
+        final public function render(): string {
             if ($this->bits !== 8 && $this->bits !== 9) {
                 $this->bits = 8;
             }
@@ -38,10 +44,9 @@ namespace Badahead\AnsiLover {
             $pcb_colors[68] = 13;
             $pcb_colors[69] = 11;
             $pcb_colors[70] = 15;
-            // STRIP UNWANTED PCBOARD CODES (DEFINED IN CONFIG FILE)                     
-            $pcboard_strip_codes_exploded = $this->PCBOARD_STRIP_CODES;
-            for ($loop = 0; $loop < sizeof($pcboard_strip_codes_exploded); $loop++) {
-                $this->content = preg_replace("/(" . $pcboard_strip_codes_exploded[$loop] . ")/", "", $this->content);
+            // STRIP UNWANTED PCBOARD CODES
+            foreach (self::PCBOARD_STRIP_CODES as $code) {
+                $this->content = preg_replace("/(" . $code . ")/", "", $this->content);
             }
             // PROCESS PCB
             $color_background = 0;
@@ -51,7 +56,7 @@ namespace Badahead\AnsiLover {
             $position_y       = 0;
             $position_x_max   = 0;
             $position_y_max   = 0;
-            $input_file_size = $this->getInputFileSize();
+            $input_file_size  = $this->getInputFileSize();
             while ($loop < $input_file_size) {
                 $current_character = ord($this->content[$loop]);
                 $next_character    = ord($this->content[$loop + 1]);

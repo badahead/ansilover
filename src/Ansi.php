@@ -8,7 +8,43 @@ namespace Badahead\AnsiLover {
 
     class Ansi extends Main
     {
-        public function __construct(string $content, ?string $fontName = null, int $columns = 80, private ?int $bits = null, private bool $thumbnail = false, private bool $transparent = false, private bool $workbench = false, private bool $ced = false, private bool $icecolors = false, private readonly bool $is_diz = false) {
+        private const bool           SUBSTITUTE_BREAK     = true;
+        private const bool           WRAP_COLUMN_80       = true;
+        private const array          CED_BACKGROUND_COLOR = [170,
+                                                             170,
+                                                             170];
+        private const array          CED_FOREGROUND_COLOR = [0,
+                                                             0,
+                                                             0];
+        private const array          WORKBENCH_COLOR_0    = [170,
+                                                             170,
+                                                             170];
+        private const array          WORKBENCH_COLOR_1    = [0,
+                                                             0,
+                                                             255];
+        private const array          WORKBENCH_COLOR_2    = [255,
+                                                             255,
+                                                             255];
+        private const array          WORKBENCH_COLOR_3    = [0,
+                                                             255,
+                                                             255];
+        private const array          WORKBENCH_COLOR_4    = [0,
+                                                             0,
+                                                             0];
+        private const array          WORKBENCH_COLOR_5    = [255,
+                                                             0,
+                                                             255];
+        private const array          WORKBENCH_COLOR_6    = [102,
+                                                             136,
+                                                             187];
+        private const array          WORKBENCH_COLOR_7    = [255,
+                                                             255,
+                                                             255];
+
+        /**
+         * @throws Exception
+         */
+        public function __construct(string $content, ?string $fontName = null, int $columns = 80, private ?int $bits = null, private readonly bool $thumbnail = false, private readonly bool $transparent = false, private readonly bool $workbench = false, private readonly bool $ced = false, private readonly bool $icecolors = false, private readonly bool $is_diz = false) {
             parent::__construct(fontName: $fontName, content: $content);
             $this->columns = $columns;
         }
@@ -41,7 +77,7 @@ namespace Badahead\AnsiLover {
             while ($loop < $input_file_size) {
                 $current_character = ord($this->content[$loop]);
                 $next_character    = ord($this->content[$loop + 1] ?? '');
-                if ($position_x === 80 && $this->WRAP_COLUMN_80) {
+                if ($position_x === 80 && self::WRAP_COLUMN_80) {
                     $position_y++;
                     $position_x = 0;
                 }
@@ -61,7 +97,7 @@ namespace Badahead\AnsiLover {
                     $position_x += 8;
                 }
                 // SUB
-                if ($current_character === 26 && $this->SUBSTITUTE_BREAK) {
+                if ($current_character === 26 && self::SUBSTITUTE_BREAK) {
                     break;
                 }
                 // ANSI SEQUENCE                                                             
@@ -71,6 +107,9 @@ namespace Badahead\AnsiLover {
                         $ansi_sequence_character = $this->content[$loop + 2 + $ansi_sequence_loop];
                         // CURSOR POSITION                                                           
                         if ($ansi_sequence_character === 'H' || $ansi_sequence_character === 'f') {
+                            if (!isset($ansi_sequence)) {
+                                $ansi_sequence = '';
+                            }
                             $ansi_sequence_exploded = explode(";", $ansi_sequence);
                             $position_y             = $ansi_sequence_exploded[0] - 1;
                             $position_x             = $ansi_sequence_exploded[1] - 1;
@@ -135,7 +174,7 @@ namespace Badahead\AnsiLover {
                         }
                         // ERASE DISPLAY                                                             
                         if ($ansi_sequence_character === 'J') {
-                            if ($ansi_sequence === 2) {
+                            if ((int)$ansi_sequence === 2) {
                                 unset($ansi_buffer);
                                 $position_x     = 0;
                                 $position_y     = 0;
@@ -151,7 +190,7 @@ namespace Badahead\AnsiLover {
                             sort($ansi_sequence_exploded);
                             for ($loop_ansi_sequence = 0; $loop_ansi_sequence < sizeof($ansi_sequence_exploded); $loop_ansi_sequence++) {
                                 $ansi_sequence_value = $ansi_sequence_exploded[$loop_ansi_sequence];
-                                if ($ansi_sequence_value === 0) {
+                                if ((int)$ansi_sequence_value === 0) {
                                     $color_background = 0;
                                     $color_foreground = 7;
                                     $bold             = false;
@@ -159,31 +198,31 @@ namespace Badahead\AnsiLover {
                                     $italics          = false;
                                     $blink            = false;
                                 }
-                                if ($ansi_sequence_value === 1) {
+                                elseif ((int)$ansi_sequence_value === 1) {
                                     if (!$this->workbench) {
                                         $color_foreground += 8;
                                     }
                                     $bold = true;
                                 }
-                                if ($ansi_sequence_value === 3) {
+                                elseif ((int)$ansi_sequence_value === 3) {
                                     $italics = true;
                                 }
-                                if ($ansi_sequence_value === 4) {
+                                elseif ((int)$ansi_sequence_value === 4) {
                                     $underline = true;
                                 }
-                                if ($ansi_sequence_value === 5) {
+                                elseif ((int)$ansi_sequence_value === 5) {
                                     if (!$this->workbench) {
                                         $color_background += 8;
                                     }
                                     $blink = true;
                                 }
-                                if ($ansi_sequence_value > 29 && $ansi_sequence_value < 38) {
-                                    $color_foreground = $ansi_sequence_value - 30;
+                                elseif ((int)$ansi_sequence_value > 29 && (int)$ansi_sequence_value < 38) {
+                                    $color_foreground = (int)$ansi_sequence_value - 30;
                                     if ($bold) {
                                         $color_foreground += 8;
                                     }
                                 }
-                                if ($ansi_sequence_value > 39 && $ansi_sequence_value < 48) {
+                                elseif ($ansi_sequence_value > 39 && $ansi_sequence_value < 48) {
                                     $color_background = $ansi_sequence_value - 40;
                                     if ($blink && $this->icecolors) {
                                         $color_background += 8;
@@ -249,8 +288,8 @@ namespace Badahead\AnsiLover {
                 throw new Exception("Can't allocate buffer image memory");
             }
             if ($this->ced) {
-                $ced_background_color = $this->CED_BACKGROUND_COLOR;
-                $ced_foreground_color = $this->CED_FOREGROUND_COLOR;
+                $ced_background_color = self::CED_BACKGROUND_COLOR;
+                $ced_foreground_color = self::CED_FOREGROUND_COLOR;
                 imagecolorallocate($ansi, $ced_background_color[0], $ced_background_color[1], $ced_background_color[2]);
                 $ced_color = imagecolorallocate($ansi, $ced_background_color[0], $ced_background_color[1], $ced_background_color[2]);
                 $ced_color = imagecolorallocate($this->background->content, $ced_background_color[0], $ced_background_color[1], $ced_background_color[2]);
@@ -262,14 +301,14 @@ namespace Badahead\AnsiLover {
             }
             else {
                 if ($this->workbench) {
-                    $workbench_color = [0 => $this->WORKBENCH_COLOR_0,
-                                        1 => $this->WORKBENCH_COLOR_4,
-                                        2 => $this->WORKBENCH_COLOR_2,
-                                        3 => $this->WORKBENCH_COLOR_6,
-                                        4 => $this->WORKBENCH_COLOR_1,
-                                        5 => $this->WORKBENCH_COLOR_5,
-                                        6 => $this->WORKBENCH_COLOR_3,
-                                        7 => $this->WORKBENCH_COLOR_7,];
+                    $workbench_color = [0 => self::WORKBENCH_COLOR_0,
+                                        1 => self::WORKBENCH_COLOR_4,
+                                        2 => self::WORKBENCH_COLOR_2,
+                                        3 => self::WORKBENCH_COLOR_6,
+                                        4 => self::WORKBENCH_COLOR_1,
+                                        5 => self::WORKBENCH_COLOR_5,
+                                        6 => self::WORKBENCH_COLOR_3,
+                                        7 => self::WORKBENCH_COLOR_7,];
                     imagecolorallocate($ansi, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
                     $workbench_background = imagecolorallocate($ansi, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
                     $workbench_background = imagecolorallocate($this->background->content, $workbench_color[0][0], $workbench_color[0][1], $workbench_color[0][2]);
